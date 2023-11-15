@@ -1,5 +1,11 @@
 const express = require("express");
-const test = require("../controller/user.controller");
+const {updateUser} = require("../controller/user.controller");
+const {verifyToken}  = require('../utils/verifyUser.js');
 const router = express.Router();
-router.get("/test",test);
+
+
+
+router.post("/update/:id",verifyToken,updateUser);
+
+
 module.exports = router;
