@@ -3,8 +3,12 @@ const mongoose = require("mongoose");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
+
 const userRouter = require('./routes/user.route.js');
 const authRouter = require("./routes/auth.route.js");
+
+const listingRouter = require('./routes/listing.route.js');
+
 const cookieParser = require('cookie-parser');
 
 
@@ -22,7 +26,10 @@ mongoose
 
 
 app.use('/api/user',userRouter);
-app.use('/api/auth',authRouter)
+app.use('/api/auth',authRouter);
+app.use('/api/listing',listingRouter);
+
+
 
 app.use((err,req,res,next)=>{
   const statusCode = err.statusCode || 500;
