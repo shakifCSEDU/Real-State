@@ -6,13 +6,12 @@ import {
   ref,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const CreateListing = () => {
-  const {currentUser} = useSelector((state)=>state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
@@ -129,8 +128,10 @@ const CreateListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if(formData.imageUrls.length <1)return setError('You must upload atleast one image');
-      if(+formData.regularPrice < +formData.discountPrice)return setError('Discount price must be lower than regular price');
+      if (formData.imageUrls.length < 1)
+        return setError("You must upload atleast one image");
+      if (+formData.regularPrice < +formData.discountPrice)
+        return setError("Discount price must be lower than regular price");
       setLoading(true);
       setError(false);
       const res = await fetch("/api/listing/create", {
@@ -140,14 +141,13 @@ const CreateListing = () => {
         },
         body: JSON.stringify({
           ...formData,
-          userRef:currentUser._id
+          userRef: currentUser._id,
         }),
       });
       const data = await res.json();
       setLoading(false);
       if (data.success === false) {
         setError(data.message);
-
       }
       navigate(`/listing/${data._id}`);
     } catch (error) {
@@ -287,30 +287,31 @@ const CreateListing = () => {
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
-                <span className="text-xs">($ / month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs">($ / month)</span>
+                )}
               </div>
             </div>
-            {
-              formData.offer &&(
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                id="discountPrice"
-                min="0"
-                max="100000"
-                required
-                className="p-3 border border-gray-400 rounded-lg"
-                onChange={handleChange}
-                value={formData.discountPrice}
-              />
-              <div className="flex flex-col items-center">
-                <p>Discounted Price</p>
-                <span className="text-xs">($ / month)</span>
+            {formData.offer && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  id="discountPrice"
+                  min="0"
+                  max="100000"
+                  required
+                  className="p-3 border border-gray-400 rounded-lg"
+                  onChange={handleChange}
+                  value={formData.discountPrice}
+                />
+                <div className="flex flex-col items-center">
+                  <p>Discounted Price</p>
+                  {formData.type === "rent" && (
+                    <span className="text-xs">($ / month)</span>
+                  )}
+                </div>
               </div>
-            </div>
-
-              )
-            }
+            )}
           </div>
         </div>
 
@@ -363,10 +364,15 @@ const CreateListing = () => {
               </div>
             ))}
 
-          <button disabled={loading||uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-            {loading?"Creating...":"Creating listing"}
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
+            {loading ? "Creating..." : "Creating listing"}
           </button>
-          {error && <p className="text-red-700 text-sm font-semibold">{error}</p>}
+          {error && (
+            <p className="text-red-700 text-sm font-semibold">{error}</p>
+          )}
         </div>
       </form>
     </main>
