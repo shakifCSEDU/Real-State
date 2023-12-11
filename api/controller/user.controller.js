@@ -37,24 +37,32 @@ const deleteUser = async (req, res, next) => {
 
   try {
     await User.findByIdAndDelete(req.params.id);
-    res.clearCookie('access_token');
+    res.clearCookie("access_token");
     res.status(200).json("User has been deleted!");
   } catch (error) {}
 };
 
-const getUserListings = async(req,res,next)=>{
-  if(req.user.id === req.params.id){
-    try{
-      const listing = await Listing.find({userRef:req.params.id});
+const getUserListings = async (req, res, next) => {
+  if (req.user.id === req.params.id) {
+    try {
+      const listing = await Listing.find({ userRef: req.params.id });
       res.status(200).json(listing);
-
-
-    }catch(error){
+    } catch (error) {
       next(error);
     }
-  }else{
-    return next(errorHanlder(401,'You can only view your own listings!'));
+  } else {
+    return next(errorHanlder(401, "You can only view your own listings!"));
   }
-}
+};
+const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(errorHanlder(404, "User not found !"));
+    const { password: pass, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = { updateUser, deleteUser,getUserListings};
+module.exports = { updateUser, deleteUser, getUserListings, getUser };
