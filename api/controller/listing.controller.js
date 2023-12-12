@@ -48,6 +48,8 @@ const updateListing = async (req, res, next) => {
     next(error);
   }
 };
+
+
 const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);
@@ -93,11 +95,14 @@ const getListings = async (req, res, next) => {
    const order = req.query.order || 'desc';
    
    const listings = await Listing.find({
+
     name:{$regex : searchTerm,$options:'i'},
+
     offer,
     furnished,
     parking,
     type,
+    
    }).sort(
     {
       [sort]:order

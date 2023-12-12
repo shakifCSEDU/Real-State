@@ -8,6 +8,7 @@ const {
   getListing,
   getListings,
 } = require("../controller/listing.controller.js");
+
 const { verifyToken } = require("../utils/verifyUser");
 
 router.post("/create", verifyToken, createListing);
