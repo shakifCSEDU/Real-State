@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
@@ -10,6 +11,7 @@ const authRouter = require("./routes/auth.route.js");
 const listingRouter = require('./routes/listing.route.js');
 
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 
 app.use(express.json());
@@ -24,11 +26,20 @@ mongoose
     console.log(err);
   });
 
+  const __dirname = path.resolve();
+
+
+
 
 app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/listing',listingRouter);
 
+app.use(express.static(path.join(__dirname,'/client/dist')));
+
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname,'client','dist','index.html'));
+})
 
 
 app.use((err,req,res,next)=>{
